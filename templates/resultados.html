@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}{{ query }} - AngoDown{% endblock %}
+
+{% block content %}
+<div class="results-container">
+    <header class="results-header">
+        <a href="/" class="logo-small">AngoDown</a>
+        <form action="/buscar" method="GET" class="search-form-inline">
+            <div class="search-wrapper">
+                <i class="ph ph-magnifying-glass search-icon"></i>
+                <input type="text" name="q" class="search-input" value="{{ query }}" placeholder="Buscar música ou artista" autocomplete="off">
+                <button type="submit" class="search-button">Buscar</button>
+            </div>
+        </form>
+    </header>
+
+    <div class="results-grid">
+        {% if results %}
+            {% for video in results %}
+            <div class="result-card">
+                <div class="result-thumb-wrapper">
+                    <img src="{{ video.thumbnail }}" alt="{{ video.titulo }}" class="result-thumb" loading="lazy">
+                    <span class="result-duration-badge">{{ video.duracao }}</span>
+                    <button class="preview-btn" data-video-id="{{ video.id }}" title="Pré-visualizar">
+                        <i class="ph ph-play"></i>
+                    </button>
+                </div>
+                <div class="result-info">
+                    <h3 class="result-title">{{ video.titulo }}</h3>
+                    <p class="result-channel">{{ video.canal }}</p>
+                    <div class="result-meta">
+                        <span class="result-views">{{ video.views }} visualizações</span>
+                    </div>
+                    <div class="result-actions">
+                        <a href="/download/{{ video.id }}/mp3" class="download-btn">
+                            <i class="ph ph-music-notes"></i> MP3
+                        </a>
+                        <a href="/download/{{ video.id }}/720" class="download-btn secondary">
+                            <i class="ph ph-video"></i> MP4 720p
+                        </a>
+                        <a href="/download/{{ video.id }}/1080" class="download-btn secondary">
+                            <i class="ph ph-film-strip"></i> MP4 1080p
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <i class="ph ph-magnifying-glass empty-icon"></i>
+                <p>Nenhum resultado encontrado para "{{ query }}"</p>
+                <a href="/" class="back-home">Voltar ao início</a>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if results %}
+    <div class="pagination">
+        {% set total_pages = 5 %}
+        {% for i in range(1, total_pages + 1) %}
+        <a href="?q={{ query }}&pagina={{ i }}" class="page-link {% if page == i %}active{% endif %}">{{ i }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="monetag-ad">
+        <!-- Monetag banner code here -->
+    </div>
+</div>
+
+<div class="preview-modal" id="previewModal">
+    <div class="preview-overlay"></div>
+    <div class="preview-content">
+        <button class="preview-close" id="previewClose">
+            <i class="ph ph-x"></i>
+        </button>
+        <div class="preview-player" id="previewPlayer"></div>
+    </div>
+</div>
+{% endblock %}

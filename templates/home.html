@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="home-container">
+    <div class="hero">
+        <h1 class="logo">AngoDown</h1>
+        <p class="hero-subtitle">Busque e baixe músicas do YouTube</p>
+        <form action="/buscar" method="GET" class="search-form">
+            <div class="search-wrapper">
+                <i class="ph ph-magnifying-glass search-icon"></i>
+                <input type="text" name="q" class="search-input" placeholder="Buscar música ou artista" autofocus autocomplete="off">
+                <button type="submit" class="search-button">Buscar</button>
+            </div>
+        </form>
+    </div>
+
+    {% if trends %}
+    <section class="trending-section">
+        <h2 class="section-title">{{ flag }} Em alta em {{ country }}</h2>
+        <div class="trending-grid">
+            {% for video in trends %}
+            <a href="/video/{{ video.id }}" class="trending-card">
+                <div class="trending-thumb-wrapper">
+                    <img src="{{ video.thumbnail }}" alt="{{ video.titulo }}" class="trending-thumb" loading="lazy">
+                    <button class="preview-btn" data-video-id="{{ video.id }}" title="Pré-visualizar">
+                        <i class="ph ph-play"></i>
+                    </button>
+                </div>
+                <div class="trending-info">
+                    <p class="trending-title">{{ video.titulo[:45] }}{% if video.titulo|length > 45 %}...{% endif %}</p>
+                    <p class="trending-channel">{{ video.canal }}</p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% else %}
+    <section class="trending-section">
+        <h2 class="section-title">{{ flag }} Em alta em {{ country }}</h2>
+        <div class="empty-state">
+            <i class="ph ph-music-notes empty-icon"></i>
+            <p>Não foi possível carregar as tendências agora.</p>
+            <p>Tente buscar por um artista ou música acima.</p>
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="categories-section">
+        <h2 class="section-title">Categorias populares</h2>
+        <div class="categories-grid">
+            {% for cat in categories %}
+            <a href="/buscar?q={{ cat | replace(' ', '+') }}" class="category-chip">{{ cat | title }}</a>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+<div class="preview-modal" id="previewModal">
+    <div class="preview-overlay"></div>
+    <div class="preview-content">
+        <button class="preview-close" id="previewClose">
+            <i class="ph ph-x"></i>
+        </button>
+        <div class="preview-player" id="previewPlayer"></div>
+    </div>
+</div>
+{% endblock %}

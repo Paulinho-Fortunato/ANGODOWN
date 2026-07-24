@@ -1,0 +1,85 @@
+2026-07-24 19:06:37,051 ERROR: Download error: could not convert string to float: '\x1b[0;94m  0.0\x1b[0m'
+2026-07-24 19:10:07,544 ERROR: Download error: [0;31mERROR:[0m You have requested merging of multiple formats but ffmpeg is not installed. Aborting due to --abort-on-error
+2026-07-24 19:25:12,788 ERROR: Download error: [0;31mERROR:[0m You have requested merging of multiple formats but ffmpeg is not installed. Aborting due to --abort-on-error
+2026-07-24 19:39:19,608 ERROR: Exception on / [GET]
+Traceback (most recent call last):
+  File "C:\Users\X7\Documents\DEV WEB\ANGODOWN\venv\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\X7\Documents\DEV WEB\ANGODOWN\venv\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\X7\Documents\DEV WEB\ANGODOWN\venv\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\X7\Documents\DEV WEB\ANGODOWN\venv\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\X7\Documents\DEV WEB\ANGODOWN\app.py", line 53, in home
+    return render_template('home.html', trends=trends, country=country)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\X7\Documents\DEV WEB\ANGODOWN\venv\Lib\site-packages\flask\templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\X7\Documents\DEV WEB\ANGODOWN\venv\Lib\site-packages\flask\templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\X7\Documents\DEV WEB\ANGODOWN\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\X7\Documents\DEV WEB\ANGODOWN\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\X7\Documents\DEV WEB\ANGODOWN\templates\home.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "C:\Users\X7\Documents\DEV WEB\ANGODOWN\templates\base.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "C:\Users\X7\Documents\DEV WEB\ANGODOWN\templates\base.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "C:\Users\X7\Documents\DEV WEB\ANGODOWN\templates\base.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  [Previous line repeated 974 more times]
+  File "C:\Users\X7\Documents\DEV WEB\ANGODOWN\venv\Lib\site-packages\jinja2\utils.py", line 477, in get
+    return self[key]
+           ~~~~^^^^^
+RecursionError: maximum recursion depth exceeded
+2026-07-24 21:15:40,824 ERROR: Search error: 'videoId'
+2026-07-24 21:22:02,406 ERROR: Search error: 'YouTubeAPI' object has no attribute 'search_videos'
+2026-07-24 21:22:03,963 ERROR: Search error: 'YouTubeAPI' object has no attribute 'search_videos'
+2026-07-24 21:22:07,677 ERROR: Trending error: 'YouTubeAPI' object has no attribute 'get_trending'
+2026-07-24 21:22:19,021 ERROR: Trending error: 'YouTubeAPI' object has no attribute 'get_trending'
+2026-07-24 21:22:22,455 ERROR: Trending error: 'YouTubeAPI' object has no attribute 'get_trending'
+2026-07-24 21:27:53,841 ERROR: Trending error: 'YouTubeAPI' object has no attribute 'get_trending'
+2026-07-24 21:36:43,272 ERROR: YouTube API error: <HttpError 400 when requesting https://youtube.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=AO&videoCategoryId=10&maxResults=8&fields=items%28id%2Csnippet%28title%2CchannelTitle%2Cthumbnails%2Fmedium%2Furl%29%29&key=AIzaSyA6bLGrmWV4cSiDMbosGYLDZIG2GvnZ6fA&alt=json returned "The <code>regionCode</code> parameter specifies an invalid region code.". Details: "[{'message': 'The <code>regionCode</code> parameter specifies an invalid region code.', 'domain': 'youtube.parameter', 'reason': 'invalidRegionCode', 'location': 'regionCode', 'locationType': 'parameter'}]">
+2026-07-24 21:57:58,271 INFO: YouTube API service initialized
+2026-07-24 22:00:14,434 INFO: Download: VEIGH - Talvez Você Precise de Mim (Clipe Oficial).mp3
+2026-07-24 22:00:59,990 INFO: Download: VEIGH - Talvez Você Precise de Mim (Clipe Oficial).mp3
+2026-07-24 22:08:12,671 INFO: Download: VEIGH - Talvez Você Precise de Mim (Clipe Oficial).mp3
+2026-07-24 22:08:42,776 INFO: Download: VEIGH - Talvez Você Precise de Mim (Clipe Oficial).mp3
+2026-07-24 22:12:32,642 INFO: Download: VEIGH - Talvez Você Precise de Mim (Clipe Oficial).mp3
+2026-07-24 22:13:09,046 INFO: Download: VEIGH - Talvez Você Precise de Mim (Clipe Oficial).mp3
+2026-07-24 22:15:07,061 INFO: Download: VEIGH - Talvez Você Precise de Mim (Clipe Oficial).mp3
+2026-07-24 22:15:14,841 ERROR: Download error: ERROR: unable to download video data: HTTP Error 403: Forbidden
+2026-07-24 22:17:34,452 INFO: Download: Lil Baby - Dead Fresh (NEW) - LYRICS.mp4
+2026-07-24 22:27:39,595 INFO: Download: VEIGH - Novo Balanço (Clipe Oficial) I Ecoando Amazon Music.mp3
+2026-07-24 22:28:30,587 INFO: Download: VEIGH - Novo Balanço (Clipe Oficial) I Ecoando Amazon Music.mp3
+2026-07-24 22:29:12,829 INFO: Download: VEIGH - Talvez Você Precise de Mim (Clipe Oficial).mp3
+2026-07-24 22:29:48,562 INFO: Download: VEIGH - Talvez Você Precise de Mim (Clipe Oficial).mp3
+2026-07-24 22:36:01,421 ERROR: Download error: ERROR: unable to download video data: HTTP Error 403: Forbidden
+2026-07-24 22:36:41,761 INFO: Download: VEIGH - Talvez Você Precise de Mim (Clipe Oficial).mp3
+2026-07-24 22:37:15,561 INFO: Shutting down...
+2026-07-24 22:52:38,807 INFO: YouTube API service initialized
+2026-07-24 23:01:43,627 INFO: Shutting down...
+2026-07-24 23:28:14,323 INFO: YouTube API service initialized
+2026-07-24 23:58:41,624 ERROR: Search error: EOF occurred in violation of protocol (_ssl.c:2406)
+2026-07-25 00:00:04,714 ERROR: Download error: ERROR: unable to download video data: HTTP Error 403: Forbidden
+2026-07-25 00:03:39,094 INFO: Shutting down...
+2026-07-25 00:07:04,330 INFO: YouTube API service initialized
+2026-07-25 00:08:23,854 ERROR: Trending error: Unable to find the server at youtube.googleapis.com
+2026-07-25 00:09:06,804 INFO: Shutting down...
+2026-07-25 00:09:17,215 INFO: YouTube API service initialized
+2026-07-25 00:10:01,725 ERROR: Download error: ERROR: ERROR: Failed to decrypt with DPAPI. See  https://github.com/yt-dlp/yt-dlp/issues/10927  for more info
+2026-07-25 00:10:03,108 ERROR: Download error: ERROR: ERROR: Failed to decrypt with DPAPI. See  https://github.com/yt-dlp/yt-dlp/issues/10927  for more info
+2026-07-25 00:12:38,746 ERROR: Download error: ERROR: ERROR: Failed to decrypt with DPAPI. See  https://github.com/yt-dlp/yt-dlp/issues/10927  for more info
+2026-07-25 00:12:45,930 ERROR: Download error: ERROR: ERROR: Failed to decrypt with DPAPI. See  https://github.com/yt-dlp/yt-dlp/issues/10927  for more info
+2026-07-25 00:15:17,485 ERROR: Download error: ERROR: ERROR: Failed to decrypt with DPAPI. See  https://github.com/yt-dlp/yt-dlp/issues/10927  for more info
+2026-07-25 00:15:23,123 ERROR: Download error: ERROR: ERROR: Failed to decrypt with DPAPI. See  https://github.com/yt-dlp/yt-dlp/issues/10927  for more info
+2026-07-25 00:16:30,624 INFO: Shutting down...

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AngoDown - Busque e baixe músicas do YouTube em MP3 e MP4">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="{% block og_title %}AngoDown{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Busque e baixe músicas do YouTube{% endblock %}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:site_name" content="AngoDown">
+    <link rel="canonical" href="{{ request.url }}">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
+    <title>{% block title %}AngoDown{% endblock %}</title>
+    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    {% block content %}{% endblock %}
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <span class="footer-logo">AngoDown</span>
+                <span class="footer-tagline">Download de música rápido e simples</span>
+            </div>
+            <nav class="footer-links">
+                <a href="/">Início</a>
+                <a href="#" onclick="return false;">Termos</a>
+                <a href="#" onclick="return false;">Privacidade</a>
+                <a href="/health">Status</a>
+            </nav>
+        </div>
+    </footer>
+
+    <div class="download-queue" id="downloadQueue">
+        <div class="queue-header">
+            <span><i class="ph ph-download"></i> Downloads</span>
+            <div class="queue-actions">
+                <button class="queue-minimize" id="queueMinimize" title="Minimizar">
+                    <i class="ph ph-minus"></i>
+                </button>
+                <button class="queue-close" id="queueClose" title="Fechar">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+        </div>
+        <div class="queue-body" id="queueList">
+            <p class="queue-empty">Nenhum download na fila</p>
+        </div>
+    </div>
+
+    <button class="queue-toggle" id="queueToggle" title="Ver downloads">
+        <i class="ph ph-download"></i>
+        <span class="queue-badge" id="queueBadge" style="display:none">0</span>
+    </button>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

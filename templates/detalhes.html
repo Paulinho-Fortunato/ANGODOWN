@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}{{ video.titulo }} - AngoDown{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+    <a href="/" class="back-link"><i class="ph ph-arrow-left"></i> Voltar</a>
+
+    <div class="detail-header">
+        <img src="{{ video.thumbnail }}" alt="{{ video.titulo }}" class="detail-thumb">
+        <div class="detail-info">
+            <h1 class="detail-title">{{ video.titulo }}</h1>
+            <p class="detail-channel">{{ video.canal }}</p>
+            <div class="detail-meta">
+                <span><i class="ph ph-clock"></i> {{ video.duracao }}</span>
+                <span><i class="ph ph-eye"></i> {{ video.views }} visualizações</span>
+                <span><i class="ph ph-thumbs-up"></i> {{ video.likes }} likes</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-description">
+        <h2>Descrição</h2>
+        <p>{{ video.descricao or 'Sem descrição disponível.' }}</p>
+    </div>
+
+    <div class="detail-downloads">
+        <h2>Opções de download</h2>
+        <div class="detail-actions">
+            <a href="/download/{{ video.id }}/mp3" class="download-btn download-btn-large">
+                <i class="ph ph-music-notes"></i>
+                <div>
+                    <strong>MP3</strong>
+                    <small>Áudio 320kbps</small>
+                </div>
+            </a>
+            <a href="/download/{{ video.id }}/720" class="download-btn download-btn-large secondary">
+                <i class="ph ph-video"></i>
+                <div>
+                    <strong>MP4 720p</strong>
+                    <small>Vídeo HD</small>
+                </div>
+            </a>
+            <a href="/download/{{ video.id }}/1080" class="download-btn download-btn-large secondary">
+                <i class="ph ph-film-strip"></i>
+                <div>
+                    <strong>MP4 1080p</strong>
+                    <small>Vídeo Full HD</small>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
