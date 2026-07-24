@@ -1,4 +1,4 @@
-﻿import yt_dlp
+import yt_dlp
 import os
 import uuid
 import logging
@@ -88,10 +88,22 @@ class VideoDownloader:
                     
                     pattern = os.path.join(output_dir, f'{download_id}*')
                     files = glob.glob(pattern)
+                    # Filtrar apenas arquivos de áudio/vídeo (não thumbnails)
                     actual_files = [f for f in files if not f.endswith(('.jpg', '.png', '.webp'))]
                     
                     if actual_files:
                         final_file = actual_files[0]
+                        # Renomear arquivo se a extensão não corresponder ao formato esperado
+                        if format_type == 'mp3' and not final_file.endswith('.mp3'):
+                            new_file = final_file.rsplit('.', 1)[0] + '.mp3'
+                            if os.path.exists(final_file):
+                                os.rename(final_file, new_file)
+                                final_file = new_file
+                        elif format_type in ['720', '1080'] and not final_file.endswith('.mp4'):
+                            new_file = final_file.rsplit('.', 1)[0] + '.mp4'
+                            if os.path.exists(final_file):
+                                os.rename(final_file, new_file)
+                                final_file = new_file
                     else:
                         final_file = os.path.join(output_dir, f'{download_id}.{ext}')
                     
@@ -101,16 +113,16 @@ class VideoDownloader:
                         'download_id': download_id
                     }
         except Exception as e:
-            logger.error(f"Download error: {e}")
+            logger.error(f"Download error: {type(e).__name__}: {str(e)[:100]}")
             raise
 
     def cleanup_old_files(self, max_age=3600):
         output_dir = current_app.config['DOWNLOAD_DIR']
-        now = os.path.getmtime
+        now = time.time()
         for file in os.listdir(output_dir):
             filepath = os.path.join(output_dir, file)
             try:
-                if os.path.isfile(filepath) and now() - os.path.getmtime(filepath) > max_age:
+                if os.path.isfile(filepath) and now - os.path.getmtime(filepath) > max_age:
                     os.remove(filepath)
             except:
                 pass
