@@ -1,0 +1,9 @@
+﻿flask
+yt-dlp
+google-api-python-client
+requests
+gunicorn
+python-dotenv
+isodate
+flask-session
+flask-compress
