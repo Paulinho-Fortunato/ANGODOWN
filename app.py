@@ -45,9 +45,9 @@ def create_app():
     with app.app_context():
         try:
             youtube_api._get_service()
-            app.logger.info("YouTube API service initialized")
+            app.logger.info("YouTube API service initialized successfully")
         except Exception as e:
-            app.logger.error(f"Failed to initialize YouTube API: {e}")
+            app.logger.error(f"Failed to initialize YouTube API: {type(e).__name__}")
 
     return app
 
@@ -256,7 +256,7 @@ def home():
     try:
         trends = youtube_api.get_trending(country_code)
     except Exception as e:
-        app.logger.error(f"Trending error: {e}")
+        app.logger.error(f"Trending error: {type(e).__name__}")
         metrics['errors'] += 1
         trends = []
     return render_template('home.html',
@@ -277,7 +277,7 @@ def search():
     try:
         results = youtube_api.search_videos(query, page)
     except Exception as e:
-        app.logger.error(f"Search error: {e}")
+        app.logger.error(f"Search error: {type(e).__name__}")
         metrics['errors'] += 1
         results = []
     return render_template('resultados.html', results=results, query=query, page=page)
@@ -311,7 +311,7 @@ def video_detail(video_id):
         }
         return render_template('detalhes.html', video=video)
     except Exception as e:
-        app.logger.error(f"Video detail error: {e}")
+        app.logger.error(f"Video detail error: {type(e).__name__}")
         metrics['errors'] += 1
         abort(500)
 
@@ -359,7 +359,7 @@ def download_video(video_id, formato):
         
         return response
     except Exception as e:
-        app.logger.error(f"Download error: {e}")
+        app.logger.error(f"Download error: {type(e).__name__}")
         metrics['errors'] += 1
         if result and os.path.exists(result['filepath']):
             try:
@@ -379,7 +379,7 @@ def api_search():
         results = youtube_api.search_videos(query, page)
         return jsonify({'results': results, 'query': query, 'page': page})
     except Exception as e:
-        app.logger.error(f"API search error: {e}")
+        app.logger.error(f"API search error: {type(e).__name__}")
         metrics['errors'] += 1
         return jsonify({'error': 'Erro interno'}), 500
 
