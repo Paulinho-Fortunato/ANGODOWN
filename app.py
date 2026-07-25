@@ -1,14 +1,15 @@
 from flask import Flask, render_template, request, jsonify, send_file, abort, redirect, url_for, session, Blueprint, make_response
 from config import Config
-from utils import youtube_api, downloader, rate_limiter
+from utils import youtube_api, downloader, rate_limiter # Assumindo que agora chama a função downloader.download
 from utils.validators import sanitize_filename
 import os
 import logging
 import requests
 import threading
-import time
+import time # <-- CORREÇÃO: Importar 'time' se ainda não estiver
 import shutil
 import sys
+import glob # <-- CORREÇÃO: Importar 'glob' para a limpeza na rota
 from logging.handlers import RotatingFileHandler
 from datetime import datetime, timedelta
 import atexit
@@ -330,65 +331,79 @@ def download_video(video_id, formato):
         abort(400)
     result = None
     try:
-        result = downloader.download(video_id, formato)
+        result = downloader.download(video_id, formato) # Chama a função específica
         # result['filename'] já vem com a extensão correta do downloader
         safe_filename = sanitize_filename(result['filename'])
-        
-        # Garantir que a extensão não foi perdida no sanitize
-        if formato == 'mp3' and not safe_filename.lower().endswith('.mp3'):
-            safe_filename = safe_filename.rsplit('.', 1)[0] + '.mp3'
-        elif formato != 'mp3' and not safe_filename.lower().endswith('.mp4'):
-            safe_filename = safe_filename.rsplit('.', 1)[0] + '.mp4'
-        
+
+        # Garantir que a extensão não foi perdida no sanitize (verificação adicional)
+        expected_ext = '.mp3' if formato == 'mp3' else '.mp4'
+        if not safe_filename.lower().endswith(expected_ext):
+             safe_filename = safe_filename.rsplit('.', 1)[0] + expected_ext
+
         safe_filename = safe_filename.encode('ascii', 'ignore').decode('ascii')
         if not safe_filename.strip():
             safe_filename = f'download.{formato}'
-        
+
         metrics['downloads'] += 1
-        
+
         # Verificar se o arquivo realmente existe antes de tentar enviar
         if not os.path.exists(result['filepath']):
-            app.logger.error(f"Arquivo não encontrado: {result['filepath']}")
+            app.logger.error(f"Arquivo não encontrado após download: {result['filepath']}")
             abort(500)
 
         mimetype = 'audio/mpeg' if formato == 'mp3' else 'video/mp4'
-        
+
         response = send_file(
             result['filepath'],
             mimetype=mimetype,
             as_attachment=True,
             download_name=safe_filename
         )
-        
+
         # Garantir que os cabeçalhos forçam o download com o nome correto
         response.headers['Content-Disposition'] = f'attachment; filename="{safe_filename}"'
         response.headers['Content-Type'] = mimetype
         response.headers['X-Content-Type-Options'] = 'nosniff'
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-        
+
         # Só apaga DEPOIS de enviar, mas sem sleep excessivo
         @response.call_on_close
         def cleanup():
             try:
                 if os.path.exists(result['filepath']):
                     os.remove(result['filepath'])
-                # Também remover thumbnails se existirem
-                base_path = result['filepath'].rsplit('.', 1)[0]
-                for thumb in glob.glob(f"{base_path}*"):
-                    if os.path.exists(thumb):
-                        os.remove(thumb)
+                    app.logger.info(f"Arquivo baixado removido: {result['filepath']}")
+                # CORREÇÃO: Agora 'glob' está importado, a limpeza de thumbnails pode funcionar
+                # Remover thumbnails associadas ao ID de download
+                base_path_no_ext = result['filepath'].rsplit('.', 1)[0]
+                # Procura por arquivos começando com o ID de download (antes da extensão original do yt-dlp)
+                # e terminando com extensões comuns de thumbnail
+                # Por exemplo, se o arquivo final era 'abc123.mp3', procura 'abc123.jpg', 'abc123.png', etc.
+                # OBS: Esta lógica assume que o nome do arquivo base antes da extensão final é o ID UUID
+                # Se o yt-dlp renomear significativamente, isso pode não funcionar.
+                # A lógica no downloader.py tenta manter o ID UUID no nome final para facilitar isso.
+                # Uma abordagem mais robusta seria armazenar os caminhos das thumbnails em uma lista
+                # dentro do objeto VideoDownloader e limpá-las lá.
+                uuid_part = os.path.basename(base_path_no_ext)
+                if uuid_part == result['download_id']: # Verifica se o nome base é o ID UUID
+                     thumbnail_pattern = os.path.join(os.path.dirname(result['filepath']), f'{uuid_part}.*')
+                     for thumb_path in glob.glob(thumbnail_pattern):
+                          if os.path.isfile(thumb_path) and thumb_path != result['filepath']: # Evita apagar o arquivo principal
+                              os.remove(thumb_path)
+                              app.logger.info(f"Thumbnail removida: {thumb_path}")
             except Exception as e:
-                app.logger.error(f"Erro no cleanup: {e}")
-        
+                app.logger.error(f"Erro no cleanup do download {result['download_id']}: {e}")
+
         return response
     except Exception as e:
-        app.logger.error(f"Download error: {type(e).__name__}")
+        app.logger.error(f"Download error para {video_id} ({formato}): {type(e).__name__}: {str(e)}")
         metrics['errors'] += 1
-        if result and os.path.exists(result['filepath']):
+        if result and 'filepath' in result and os.path.exists(result['filepath']):
             try:
                 os.remove(result['filepath'])
-            except:
-                pass
+                app.logger.info(f"Arquivo de download falho removido: {result['filepath']}")
+            except OSError as remove_e:
+                app.logger.error(f"Falha ao remover arquivo de download falho {result['filepath']}: {remove_e}")
         abort(500)
 
 @api_bp.route('/buscar')
