@@ -324,10 +324,11 @@ def download_video(video_id, formato):
         result = downloader.download(video_id, formato)
         safe_filename = sanitize_filename(result['filename'])
         
+        base_name = safe_filename.rsplit('.', 1)[0]
         if formato == 'mp3':
-            safe_filename = safe_filename.rsplit('.', 1)[0] + '.mp3'
+            safe_filename = f"{base_name}.mp3"
         else:
-            safe_filename = safe_filename.rsplit('.', 1)[0] + '.mp4'
+            safe_filename = f"{base_name}.mp4"
         
         safe_filename = safe_filename.encode('ascii', 'ignore').decode('ascii')
         if not safe_filename.strip():
