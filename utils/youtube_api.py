@@ -1,8 +1,11 @@
-﻿from googleapiclient.discovery import build
+from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from flask import current_app
 import isodate
 import time
+import logging
+
+logger = logging.getLogger(__name__)
 
 class YouTubeAPI:
     def __init__(self):
@@ -29,6 +32,8 @@ class YouTubeAPI:
             api_key = current_app.config['YOUTUBE_API_KEY']
             if not api_key:
                 raise ValueError("YOUTUBE_API_KEY não configurada")
+            # Não registrar a chave completa
+            logger.info("Initializing YouTube API service")
             self.service = build('youtube', 'v3', developerKey=api_key, cache_discovery=False)
         return self.service
 
@@ -100,10 +105,11 @@ class YouTubeAPI:
                 })
             return results
         except HttpError as e:
-            current_app.logger.error(f"YouTube API error: {e}")
+            # Log sem expor detalhes sensíveis
+            current_app.logger.error(f"YouTube API error: {type(e).__name__}")
             return []
         except Exception as e:
-            current_app.logger.error(f"Search error: {e}")
+            current_app.logger.error(f"Search error: {type(e).__name__}")
             return []
 
     def get_trending(self, country='US', max_results=8):
@@ -140,8 +146,8 @@ class YouTubeAPI:
             self._cache_time[cache_key] = now
             return trends
         except HttpError as e:
-            current_app.logger.error(f"YouTube API error: {e}")
+            current_app.logger.error(f"YouTube API error: {type(e).__name__}")
             return self._trending_cache.get(cache_key, [])
         except Exception as e:
-            current_app.logger.error(f"Trending error: {e}")
+            current_app.logger.error(f"Trending error: {type(e).__name__}")
             return self._trending_cache.get(cache_key, [])
