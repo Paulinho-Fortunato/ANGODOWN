@@ -1,1 +1,1 @@
-﻿web: gunicorn app:app --timeout 120 --workers 2
+bash -c 'mkdir -p downloads && gunicorn app:app --timeout 120 --workers 2'
