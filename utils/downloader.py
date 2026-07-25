@@ -54,13 +54,7 @@ class VideoDownloader:
                     'key': 'FFmpegExtractAudio',
                     'preferredcodec': 'mp3',
                     'preferredquality': '192',
-                }, {
-                    'key': 'FFmpegMetadata',
-                    'add_metadata': True,
-                }, {
-                    'key': 'EmbedThumbnail',
                 }],
-                'writethumbnail': True,
                 'postprocessor_args': ['-ar', '44100'],
             })
             ext = 'mp3'
@@ -94,18 +88,15 @@ class VideoDownloader:
                     
                     if actual_files:
                         final_file = actual_files[0]
-                        # Renomear arquivo se a extensão não corresponder ao formato esperado
-                        if format_type == 'mp3' and not final_file.endswith('.mp3'):
-                            new_file = final_file.rsplit('.', 1)[0] + '.mp3'
-                            if os.path.exists(final_file):
-                                os.rename(final_file, new_file)
-                                final_file = new_file
-                        elif format_type in ['720', '1080'] and not final_file.endswith('.mp4'):
-                            new_file = final_file.rsplit('.', 1)[0] + '.mp4'
+                        # Forçar extensão correta se o yt-dlp/ffmpeg falhar na nomeação
+                        target_ext = '.mp3' if format_type == 'mp3' else '.mp4'
+                        if not final_file.lower().endswith(target_ext):
+                            new_file = final_file.rsplit('.', 1)[0] + target_ext
                             if os.path.exists(final_file):
                                 os.rename(final_file, new_file)
                                 final_file = new_file
                     else:
+                        # Se não encontrar arquivos, tentar o caminho esperado
                         final_file = os.path.join(output_dir, f'{download_id}.{ext}')
                     
                     return {

@@ -49,6 +49,15 @@ def create_app():
         except Exception as e:
             app.logger.error(f"Failed to initialize YouTube API: {type(e).__name__}")
 
+    @app.errorhandler(500)
+    def internal_error(error):
+        app.logger.error(f"Server Error: {error}")
+        return render_template('errors/500.html'), 500
+
+    @app.errorhandler(404)
+    def not_found_error(error):
+        return render_template('errors/404.html'), 404
+
     return app
 
 app = create_app()
@@ -322,13 +331,14 @@ def download_video(video_id, formato):
     result = None
     try:
         result = downloader.download(video_id, formato)
+        # result['filename'] já vem com a extensão correta do downloader
         safe_filename = sanitize_filename(result['filename'])
         
-        base_name = safe_filename.rsplit('.', 1)[0]
-        if formato == 'mp3':
-            safe_filename = f"{base_name}.mp3"
-        else:
-            safe_filename = f"{base_name}.mp4"
+        # Garantir que a extensão não foi perdida no sanitize
+        if formato == 'mp3' and not safe_filename.lower().endswith('.mp3'):
+            safe_filename = safe_filename.rsplit('.', 1)[0] + '.mp3'
+        elif formato != 'mp3' and not safe_filename.lower().endswith('.mp4'):
+            safe_filename = safe_filename.rsplit('.', 1)[0] + '.mp4'
         
         safe_filename = safe_filename.encode('ascii', 'ignore').decode('ascii')
         if not safe_filename.strip():
@@ -336,27 +346,39 @@ def download_video(video_id, formato):
         
         metrics['downloads'] += 1
         
-        response = make_response(send_file(
+        # Verificar se o arquivo realmente existe antes de tentar enviar
+        if not os.path.exists(result['filepath']):
+            app.logger.error(f"Arquivo não encontrado: {result['filepath']}")
+            abort(500)
+
+        mimetype = 'audio/mpeg' if formato == 'mp3' else 'video/mp4'
+        
+        response = send_file(
             result['filepath'],
-            mimetype='audio/mpeg' if formato == 'mp3' else 'video/mp4',
+            mimetype=mimetype,
             as_attachment=True,
             download_name=safe_filename
-        ))
+        )
         
+        # Garantir que os cabeçalhos forçam o download com o nome correto
         response.headers['Content-Disposition'] = f'attachment; filename="{safe_filename}"'
+        response.headers['Content-Type'] = mimetype
+        response.headers['X-Content-Type-Options'] = 'nosniff'
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-        response.headers['Pragma'] = 'no-cache'
-        response.headers['Expires'] = '0'
         
-        # Só apaga DEPOIS de enviar
+        # Só apaga DEPOIS de enviar, mas sem sleep excessivo
         @response.call_on_close
         def cleanup():
-            time.sleep(2)
             try:
                 if os.path.exists(result['filepath']):
                     os.remove(result['filepath'])
-            except:
-                pass
+                # Também remover thumbnails se existirem
+                base_path = result['filepath'].rsplit('.', 1)[0]
+                for thumb in glob.glob(f"{base_path}*"):
+                    if os.path.exists(thumb):
+                        os.remove(thumb)
+            except Exception as e:
+                app.logger.error(f"Erro no cleanup: {e}")
         
         return response
     except Exception as e:
